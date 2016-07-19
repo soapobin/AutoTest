@@ -87,7 +87,7 @@ class Test:
 if __name__=="__main__":
 	title = "Test" + str(random.randint(1,1000))
 	content = str(random.random()*100000)
-	ceshi = Test(url="bbs.xxxxxx.com",username="xxxxxxxxx",password=xxxxxx,title=title,content=content)
+	ceshi = Test(url="bbs.xxxxxxxxx.com",username="xxxxxxxxx",password=xxxxxx,title=title,content=content)
 	ceshi.loginUrl()
 	ceshi.issueTopic()
 
