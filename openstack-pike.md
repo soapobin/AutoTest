@@ -45,3 +45,14 @@ systemctl enable memcached.service
 systemctl start memcached.service
 ```
 
+# Minimal deployment
+## keystone installation for Pike
+## glance installation for Pike
+## nova installation for Pike
+## neutron installation for Pike
+## horizon installation for Pike
+## cinder installation for Pike
+
+
+
+
