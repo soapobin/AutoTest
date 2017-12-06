@@ -716,6 +716,23 @@ project_name = service
 username = neutron
 password = password
 
+
+cat /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+
+[linux_bridge]
+physical_interface_mappings = provider:eth0
+
+[vxlan]
+enable_vxlan = true
+local_ip = OVERLAY_INTERFACE_IP_ADDRESS (compute node ip)
+l2_population = true
+
+
+[securitygroup]
+# ...
+enable_security_group = true
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+
 systemctl restart openstack-nova-compute.service
 systemctl enable neutron-linuxbridge-agent.service
 systemctl start neutron-linuxbridge-agent.service
