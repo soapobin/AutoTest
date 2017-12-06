@@ -99,5 +99,14 @@ export OS_IDENTITY_API_VERSION=3
 ## cinder installation for Pike
 
 
+## FAQ
+- ImportError: cannot import name offset
+su -s /bin/sh -c "keystone-manage db_sync" keystone  #报错
 
+解决：
+
+  1. pip install --upgrade pip
+  2. pip uninstall sqlparse
+  3. rm -rf  /usr/lib/python2.7/site-packages/sqlparse*
+  4. pip install sqlparse
 
