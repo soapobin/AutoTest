@@ -389,6 +389,14 @@ systemctl start openstack-nova-api.service \
 
 ```
 
+### Compute node install Nova
+```shell
+yum install centos-release-openstack-pike -y
+yum install python-openstackclient openstack-selinux -y
+yum install openstack-nova-compute
+
+```
+
 ### neutron installation for Pike
 ### horizon installation for Pike
 ### cinder installation for Pike
