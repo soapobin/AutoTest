@@ -474,6 +474,14 @@ systemctl start libvirtd.service openstack-nova-compute.service
 
 ```
 
+#### At controller node run command Add the compute node to the cell database
+```shell
+. admin-openrc
+openstack compute service list --service nova-compute
+su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
+
+```
+
 ### neutron installation for Pike
 ### horizon installation for Pike
 ### cinder installation for Pike
