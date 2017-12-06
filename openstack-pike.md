@@ -485,13 +485,152 @@ su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
 ### 5 neutron installation for Pike
 ```shell
 mysql -u root -p
-
 CREATE DATABASE neutron;
-
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED BY 'password';
-
 GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY 'password';
 ```
+#### 5.1 Create OpenStack client environment scripts
+```shell
+. admin-openrc
+openstack user create --domain default --password-prompt neutron
+openstack role add --project service --user neutron admin
+
+openstack service create --name neutron \
+  --description "OpenStack Networking" network
+  
+openstack endpoint create --region RegionOne \
+  network public http://controller:9696
+  
+openstack endpoint create --region RegionOne \
+  network internal http://controller:9696
+
+openstack endpoint create --region RegionOne \
+  network admin http://controller:9696
+  
+```
+
+#### 5.2 Configure Networking Option 2: Self-service networks
+```shell
+yum install openstack-neutron openstack-neutron-ml2 \
+  openstack-neutron-linuxbridge ebtables
+
+cat /etc/neutron/neutron.conf
+
+[database]
+# ...
+connection = mysql+pymysql://neutron:NEUTRON_DBPASS@controller/neutron
+
+[DEFAULT]
+# ...
+core_plugin = ml2
+service_plugins = router
+allow_overlapping_ips = true
+
+[DEFAULT]
+# ...
+transport_url = rabbit://openstack:RABBIT_PASS@controller
+
+[DEFAULT]
+# ...
+auth_strategy = keystone
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = neutron
+password = NEUTRON_PASS
+
+[DEFAULT]
+# ...
+notify_nova_on_port_status_changes = true
+notify_nova_on_port_data_changes = true
+
+[nova]
+# ...
+auth_url = http://controller:35357
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = nova
+password = NOVA_PASS
+
+[oslo_concurrency]
+# ...
+lock_path = /var/lib/neutron/tmp
+
+cat /etc/neutron/plugins/ml2/ml2_conf.ini
+
+[ml2]
+# ...
+type_drivers = flat,vlan,vxlan
+
+[ml2]
+# ...
+tenant_network_types = vxlan
+
+[ml2]
+# ...
+mechanism_drivers = linuxbridge,l2population
+
+[ml2]
+# ...
+extension_drivers = port_security
+
+[ml2_type_flat]
+# ...
+flat_networks = provider
+
+[ml2_type_vxlan]
+# ...
+vni_ranges = 1:1000
+
+[securitygroup]
+# ...
+enable_ipset = true
+
+
+cat /etc/neutron/plugins/ml2/linuxbridge_agent.ini
+
+[linux_bridge]
+physical_interface_mappings = provider:eth0
+
+[vxlan]
+enable_vxlan = true
+local_ip = OVERLAY_INTERFACE_IP_ADDRESS (controller node ip)
+l2_population = true
+
+[securitygroup]
+# ...
+enable_security_group = true
+firewall_driver = neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+
+cat /etc/neutron/l3_agent.ini
+
+[DEFAULT]
+# ...
+interface_driver = linuxbridge
+
+
+cat /etc/neutron/dhcp_agent.ini
+
+[DEFAULT]
+# ...
+interface_driver = linuxbridge
+dhcp_driver = neutron.agent.linux.dhcp.Dnsmasq
+enable_isolated_metadata = true
+
+
+```
+
+
 ### horizon installation for Pike
 ### cinder installation for Pike
 
