@@ -482,7 +482,15 @@ su -s /bin/sh -c "nova-manage cell_v2 discover_hosts --verbose" nova
 
 ```
 
-### neutron installation for Pike
+### 5 neutron installation for Pike
+```shell
+mysql -u root -p
+CREATE DATABASE neutron;
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' \
+  IDENTIFIED BY 'password';
+MariaDB [(none)]> GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' \
+  IDENTIFIED BY 'password';
+```
 ### horizon installation for Pike
 ### cinder installation for Pike
 
