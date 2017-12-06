@@ -137,8 +137,14 @@ export OS_PASSWORD=password
 export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
-
 ```
+
+### 1.4 Using the scripts
+```shell
+source admin-openrc
+openstack token issue
+```
+
 
 ## glance installation for Pike
 ## nova installation for Pike
