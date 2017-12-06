@@ -673,9 +673,9 @@ systemctl enable neutron-l3-agent.service
 systemctl start neutron-l3-agent.service
 ```
 
-
-### horizon installation for Pike
-### cinder installation for Pike
+### 6 Install and configure neutron at compute node
+### 7 horizon installation for Pike
+### 8 cinder installation for Pike
 
 
 ## FAQ
