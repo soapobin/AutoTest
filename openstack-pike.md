@@ -395,6 +395,83 @@ yum install centos-release-openstack-pike -y
 yum install python-openstackclient openstack-selinux -y
 yum install openstack-nova-compute
 
+cat /etc/nova/nova.conf
+
+[DEFAULT]
+# ...
+enabled_apis = osapi_compute,metadata
+
+[DEFAULT]
+# ...
+transport_url = rabbit://openstack:RABBIT_PASS@controller
+
+[api]
+# ...
+auth_strategy = keystone
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = nova
+password = password
+
+[DEFAULT]
+# ...
+my_ip = MANAGEMENT_INTERFACE_IP_ADDRESS (nova controller node)
+
+[DEFAULT]
+# ...
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+
+[vnc]
+# ...
+enabled = True
+vncserver_listen = 0.0.0.0
+vncserver_proxyclient_address = $my_ip
+novncproxy_base_url = http://controller:6080/vnc_auto.html
+
+[glance]
+# ...
+api_servers = http://controller:9292
+
+[oslo_concurrency]
+# ...
+lock_path = /var/lib/nova/tmp
+
+[placement]
+# ...
+os_region_name = RegionOne
+project_domain_name = Default
+project_name = service
+auth_type = password
+user_domain_name = Default
+auth_url = http://controller:35357/v3
+username = placement
+password = password
+
+egrep -c '(vmx|svm)' /proc/cpuinfo
+'''
+If this command returns a value of one or greater, your compute node supports hardware acceleration which typically requires no additional configuration.
+
+If this command returns a value of zero, your compute node does not support hardware acceleration and you must configure libvirt to use QEMU instead of KVM.
+
+Edit the [libvirt] section in the /etc/nova/nova.conf file as follows:
+
+[libvirt]
+# ...
+virt_type = qemu
+'''
+
+systemctl enable libvirtd.service openstack-nova-compute.service
+systemctl start libvirtd.service openstack-nova-compute.service
+
 ```
 
 ### neutron installation for Pike
