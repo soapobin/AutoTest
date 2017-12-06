@@ -18,4 +18,10 @@ innodb_file_per_table = on
 max_connections = 4096
 collation-server = utf8_general_ci
 character-set-server = utf8
+
+systemctl enable mariadb.service
+systemctl start mariadb.service
+mysql_secure_installation
+
+# input enter -> y ->  new password -> y -> y -> y -> y 
 ```
