@@ -146,7 +146,15 @@ openstack token issue
 ```
 
 
-## glance installation for Pike
+## 2. glance installation for Pike
+```shell
+mysql -u root -p
+CREATE DATABASE glance;
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON glance.* TO 'glance'@'%' IDENTIFIED BY 'password';
+flush privileges ;
+
+```
 ## nova installation for Pike
 ## neutron installation for Pike
 ## horizon installation for Pike
