@@ -263,15 +263,15 @@ enabled_apis = osapi_compute,metadata
 
 [api_database]
 # ...
-connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova_api
+connection = mysql+pymysql://nova:password@controller/nova_api
 
 [database]
 # ...
-connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova
+connection = mysql+pymysql://nova:password@controller/nova
 
 [DEFAULT]
 # ...
-transport_url = rabbit://openstack:RABBIT_PASS@controller
+transport_url = rabbit://openstack:password@controller
 
 [api]
 # ...
@@ -287,7 +287,7 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = nova
-password = NOVA_PASS
+password = password
 
 
 [DEFAULT]
@@ -324,7 +324,7 @@ auth_type = password
 user_domain_name = Default
 auth_url = http://controller:35357/v3
 username = placement
-password = PLACEMENT_PASS
+password = password
 
 cat /etc/httpd/conf.d/00-nova-placement-api.conf
 
