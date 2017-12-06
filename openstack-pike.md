@@ -674,6 +674,52 @@ systemctl start neutron-l3-agent.service
 ```
 
 ### 6 Install and configure neutron at compute node
+```shell
+yum install openstack-neutron-linuxbridge ebtables ipset -y
+cat /etc/neutron/neutron.conf
+
+[DEFAULT]
+# ...
+transport_url = rabbit://openstack:password@controller
+
+[DEFAULT]
+# ...
+auth_strategy = keystone
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = neutron
+password = password
+
+[oslo_concurrency]
+# ...
+lock_path = /var/lib/neutron/tmp
+
+cat /etc/nova/nova.conf
+
+[neutron]
+# ...
+url = http://controller:9696
+auth_url = http://controller:35357
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+region_name = RegionOne
+project_name = service
+username = neutron
+password = password
+
+systemctl restart openstack-nova-compute.service
+systemctl enable neutron-linuxbridge-agent.service
+systemctl start neutron-linuxbridge-agent.service
+```
 ### 7 horizon installation for Pike
 ### 8 cinder installation for Pike
 
