@@ -237,7 +237,158 @@ systemctl enable openstack-glance-api.service openstack-glance-registry.service
 systemctl start openstack-glance-api.service openstack-glance-registry.service
 ```
 
-### nova installation for Pike
+### 3 nova installation for Pike
+```shell
+mysql -u root -p
+CREATE DATABASE nova_api;
+CREATE DATABASE nova;
+CREATE DATABASE nova_cell0;
+
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON nova_api.* TO 'nova'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON nova.* TO 'nova'@'%' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON nova_cell0.* TO 'nova'@'%' IDENTIFIED BY 'password';
+
+yum install openstack-nova-api openstack-nova-conductor \
+  openstack-nova-console openstack-nova-novncproxy \
+  openstack-nova-scheduler openstack-nova-placement-api -y
+  
+cat /etc/nova/nova.conf
+
+[DEFAULT]
+# ...
+enabled_apis = osapi_compute,metadata
+
+[api_database]
+# ...
+connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova_api
+
+[database]
+# ...
+connection = mysql+pymysql://nova:NOVA_DBPASS@controller/nova
+
+[DEFAULT]
+# ...
+transport_url = rabbit://openstack:RABBIT_PASS@controller
+
+[api]
+# ...
+auth_strategy = keystone
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = nova
+password = NOVA_PASS
+
+
+[DEFAULT]
+# ...
+my_ip = 10.0.0.11
+
+[DEFAULT]
+# ...
+use_neutron = True
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+
+[vnc]
+enabled = true
+# ...
+vncserver_listen = $my_ip
+vncserver_proxyclient_address = $my_ip
+
+
+[glance]
+# ...
+api_servers = http://controller:9292
+
+[oslo_concurrency]
+# ...
+lock_path = /var/lib/nova/tmp
+
+
+[placement]
+# ...
+os_region_name = RegionOne
+project_domain_name = Default
+project_name = service
+auth_type = password
+user_domain_name = Default
+auth_url = http://controller:35357/v3
+username = placement
+password = PLACEMENT_PASS
+
+cat /etc/httpd/conf.d/00-nova-placement-api.conf
+
+<Directory /usr/bin>
+   <IfVersion >= 2.4>
+      Require all granted
+   </IfVersion>
+   <IfVersion < 2.4>
+      Order allow,deny
+      Allow from all
+   </IfVersion>
+</Directory>
+
+```
+
+#### 3.1 Create a domain, projects, users, and roles
+```shell
+source admin-openrc
+openstack user create --domain default --password-prompt nova
+openstack role add --project service --user nova admin
+
+openstack service create --name nova \
+  --description "OpenStack Compute" compute
+  
+openstack endpoint create --region RegionOne \
+  compute public http://controller:8774/v2.1
+  
+openstack endpoint create --region RegionOne \
+  compute internal http://controller:8774/v2.1
+
+openstack endpoint create --region RegionOne \
+  compute admin http://controller:8774/v2.1
+
+
+openstack user create --domain default --password-prompt placement
+openstack role add --project service --user placement admin
+openstack service create --name placement --description "Placement API" placement
+openstack endpoint create --region RegionOne placement public http://controller:8778
+openstack endpoint create --region RegionOne placement internal http://controller:8778
+openstack endpoint create --region RegionOne placement admin http://controller:8778
+
+```
+
+
+#### 3.2 Sync Database And start
+```shell
+systemctl restart httpd
+su -s /bin/sh -c "nova-manage api_db sync" nova
+
+su -s /bin/sh -c "nova-manage cell_v2 map_cell0" nova
+su -s /bin/sh -c "nova-manage cell_v2 create_cell --name=cell1 --verbose" nova
+su -s /bin/sh -c "nova-manage db sync" nova
+nova-manage cell_v2 list_cells
+
+systemctl enable openstack-nova-api.service \
+  openstack-nova-consoleauth.service openstack-nova-scheduler.service \
+  openstack-nova-conductor.service openstack-nova-novncproxy.service
+
+systemctl start openstack-nova-api.service \
+  openstack-nova-consoleauth.service openstack-nova-scheduler.service \
+  openstack-nova-conductor.service openstack-nova-novncproxy.service
+
+```
+
 ### neutron installation for Pike
 ### horizon installation for Pike
 ### cinder installation for Pike
