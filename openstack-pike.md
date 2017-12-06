@@ -100,9 +100,8 @@ export OS_IDENTITY_API_VERSION=3
 
 
 ## FAQ
+1. su -s /bin/sh -c "keystone-manage db_sync" keystone  #报错
 - ImportError: cannot import name offset
-
-su -s /bin/sh -c "keystone-manage db_sync" keystone  #报错
 
 解决：
 
