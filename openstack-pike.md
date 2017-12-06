@@ -389,7 +389,7 @@ systemctl start openstack-nova-api.service \
 
 ```
 
-### Compute node install Nova
+### 4 Compute node install Nova
 ```shell
 yum install centos-release-openstack-pike -y
 yum install python-openstackclient openstack-selinux -y
