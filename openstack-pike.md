@@ -106,6 +106,39 @@ openstack role create user
 openstack role add --project demo --user demo user
 ```
 
+### 1.2 Verify operation
+```shell
+unset OS_AUTH_URL OS_PASSWORD
+openstack --os-auth-url http://controller:35357/v3 \
+  --os-project-domain-name Default --os-user-domain-name Default \
+  --os-project-name admin --os-username admin token issue
+```
+
+### 1.3 Create OpenStack client environment scripts
+```shell
+cat admin-openrc
+
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=password
+export OS_AUTH_URL=http://controller:35357/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+
+cat demo-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=demo
+export OS_USERNAME=demo
+export OS_PASSWORD=password
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+```
 
 ## glance installation for Pike
 ## nova installation for Pike
