@@ -25,3 +25,12 @@ mysql_secure_installation
 
 # input enter -> y ->  new password -> y -> y -> y -> y 
 ```
+
+## 3 Install Message queue for RabbitMq
+```shell
+yum install rabbitmq-server -y
+systemctl enable rabbitmq-server.service
+systemctl start rabbitmq-server.service
+rabbitmqctl add_user openstack password
+rabbitmqctl set_permissions openstack ".*" ".*" ".*"
+```
