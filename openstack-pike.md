@@ -158,7 +158,7 @@ yum install openstack-glance -y
 cat /etc/glance/glance-api.conf
 [database]
 # ...
-connection = mysql+pymysql://glance:GLANCE_DBPASS@controller/glance
+connection = mysql+pymysql://glance:password@controller/glance
 
 [keystone_authtoken]
 # ...
@@ -170,12 +170,40 @@ project_domain_name = default
 user_domain_name = default
 project_name = service
 username = glance
-password = GLANCE_PASS
+password = password
 
 [paste_deploy]
 # ...
 flavor = keystone
 
+[glance_store]
+# ...
+stores = file,http
+default_store = file
+filesystem_store_datadir = /var/lib/glance/images/
+
+
+cat /etc/glance/glance-registry.conf
+
+[database]
+# ...
+connection = mysql+pymysql://glance:password@controller/glance
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = glance
+password = password
+
+[paste_deploy]
+# ...
+flavor = keystone
 
 ```
 
@@ -199,6 +227,16 @@ openstack endpoint create --region RegionOne \
   image admin http://controller:9292
   
 ```
+
+### 2.2 Sync database 
+```shell
+su -s /bin/sh -c "glance-manage db_sync" glance
+
+systemctl enable openstack-glance-api.service openstack-glance-registry.service
+
+systemctl start openstack-glance-api.service openstack-glance-registry.service
+```
+
 ## nova installation for Pike
 ## neutron installation for Pike
 ## horizon installation for Pike
