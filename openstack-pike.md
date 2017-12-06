@@ -40,7 +40,7 @@ rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 yum install memcached python-memcached -y
 cat /etc/sysconfig/memcached
 
-OPTIONS="-l 127.0.0.1,::1,controller"
+OPTIONS="-l controller"
 systemctl enable memcached.service
 systemctl start memcached.service
 ```
