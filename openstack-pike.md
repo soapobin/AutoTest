@@ -34,3 +34,14 @@ systemctl start rabbitmq-server.service
 rabbitmqctl add_user openstack password
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ```
+
+## 4 Install and configure for Memcache
+```shell
+yum install memcached python-memcached -y
+cat /etc/sysconfig/memcached
+
+OPTIONS="-l 127.0.0.1,::1,controller"
+systemctl enable memcached.service
+systemctl start memcached.service
+```
+
