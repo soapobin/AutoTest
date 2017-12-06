@@ -782,8 +782,17 @@ TIME_ZONE = "Asia/Shanghai"
 systemctl restart httpd.service memcached.service
 
 ```
-### 8 cinder installation for Pike
+### 8 cinder installation for Pike At block node  
+```shell
+yum install centos-release-openstack-pike -y
+yum install python-openstackclient openstack-selinux lvm2 -y
+systemctl enable lvm2-lvmetad.service
+systemctl start lvm2-lvmetad.service
+pvcreate /dev/sdb
+vgcreate cinder-volumes /dev/sdb
 
+
+```
 
 ## FAQ
 1. su -s /bin/sh -c "keystone-manage db_sync" keystone  #报错
