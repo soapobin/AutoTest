@@ -1,11 +1,11 @@
 # Openstack pike install guide
-## 1 Yum Repo
+### 1 Yum Repo
 ```shell
 yum install centos-release-openstack-pike -y
 yum install python-openstackclient openstack-selinux -y
 ```
 
-## 2 Install MYSQL
+### 2 Install MYSQL
 ```shell
 yum install mariadb mariadb-server python2-PyMySQL
 
@@ -26,7 +26,7 @@ mysql_secure_installation
 # input enter -> y ->  new password -> y -> y -> y -> y 
 ```
 
-## 3 Install Message queue for RabbitMq
+### 3 Install Message queue for RabbitMq
 ```shell
 yum install rabbitmq-server -y
 systemctl enable rabbitmq-server.service
@@ -35,7 +35,7 @@ rabbitmqctl add_user openstack password
 rabbitmqctl set_permissions openstack ".*" ".*" ".*"
 ```
 
-## 4 Install and configure for Memcache
+### 4 Install and configure for Memcache
 ```shell
 yum install memcached python-memcached -y
 cat /etc/sysconfig/memcached
@@ -45,8 +45,8 @@ systemctl enable memcached.service
 systemctl start memcached.service
 ```
 
-# Minimal deployment
-## 1. keystone installation for Pike
+## Minimal deployment
+### 1. keystone installation for Pike
 ```shell
 mysql -u root -p
 CREATE DATABASE keystone;
@@ -91,7 +91,7 @@ export OS_PROJECT_DOMAIN_NAME=Default
 export OS_AUTH_URL=http://controller:35357/v3
 export OS_IDENTITY_API_VERSION=3
 ```
-### 1.1 Create a domain, projects, users, and roles
+#### 1.1 Create a domain, projects, users, and roles
 ```shell
 openstack project create --domain default \
   --description "Service Project" service
@@ -106,7 +106,7 @@ openstack role create user
 openstack role add --project demo --user demo user
 ```
 
-### 1.2 Verify operation
+#### 1.2 Verify operation
 ```shell
 unset OS_AUTH_URL OS_PASSWORD
 openstack --os-auth-url http://controller:35357/v3 \
@@ -114,7 +114,7 @@ openstack --os-auth-url http://controller:35357/v3 \
   --os-project-name admin --os-username admin token issue
 ```
 
-### 1.3 Create OpenStack client environment scripts
+#### 1.3 Create OpenStack client environment scripts
 ```shell
 cat admin-openrc
 
@@ -139,14 +139,14 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 ```
 
-### 1.4 Using the scripts
+#### 1.4 Using the scripts
 ```shell
 source admin-openrc
 openstack token issue
 ```
 
 
-## 2. glance installation for Pike
+### 2. glance installation for Pike
 ```shell
 mysql -u root -p
 CREATE DATABASE glance;
@@ -207,7 +207,7 @@ flavor = keystone
 
 ```
 
-### 2.1 Create a domain, projects, users, and roles
+#### 2.1 Create a domain, projects, users, and roles
 ```shell
 source admin-openrc
 
@@ -228,7 +228,7 @@ openstack endpoint create --region RegionOne \
   
 ```
 
-### 2.2 Sync database And start glance Serivce
+#### 2.2 Sync database And start glance Serivce
 ```shell
 su -s /bin/sh -c "glance-manage db_sync" glance
 
@@ -237,10 +237,10 @@ systemctl enable openstack-glance-api.service openstack-glance-registry.service
 systemctl start openstack-glance-api.service openstack-glance-registry.service
 ```
 
-## nova installation for Pike
-## neutron installation for Pike
-## horizon installation for Pike
-## cinder installation for Pike
+### nova installation for Pike
+### neutron installation for Pike
+### horizon installation for Pike
+### cinder installation for Pike
 
 
 ## FAQ
