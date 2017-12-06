@@ -228,7 +228,7 @@ openstack endpoint create --region RegionOne \
   
 ```
 
-### 2.2 Sync database 
+### 2.2 Sync database And start glance Serivce
 ```shell
 su -s /bin/sh -c "glance-manage db_sync" glance
 
