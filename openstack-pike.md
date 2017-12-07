@@ -795,7 +795,7 @@ fdisk /dev/xvdb
 partprobe
 
 pvcreate /dev/sdb
-vgcreate cinder-volumes /dev/xvdb
+vgcreate cinder-volumes /dev/xvdb    # volumes name master be cinder-volumes
 
 vgs
   VG             #PV #LV #SN Attr   VSize    VFree
