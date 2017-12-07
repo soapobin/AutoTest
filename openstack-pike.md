@@ -791,6 +791,65 @@ systemctl start lvm2-lvmetad.service
 pvcreate /dev/sdb
 vgcreate cinder-volumes /dev/sdb
 
+vgs
+  VG             #PV #LV #SN Attr   VSize    VFree
+  cinder-volumes   1   1   0 wz--n- <100.00g <4.81g
+  
+cat /etc/lvm/lvm.conf
+
+filter = [ "a/xvda/","a/xvdb/", "r/.*/"]
+
+yum install openstack-cinder targetcli python-keystone
+cat /etc/cinder/cinder.conf
+
+[database]
+# ...
+connection = mysql+pymysql://cinder:password@controller/cinder
+
+[DEFAULT]
+# ...
+transport_url = rabbit://openstack:password@controller
+
+[DEFAULT]
+# ...
+auth_strategy = keystone
+
+[keystone_authtoken]
+# ...
+auth_uri = http://controller:5000
+auth_url = http://controller:35357
+memcached_servers = controller:11211
+auth_type = password
+project_domain_name = default
+user_domain_name = default
+project_name = service
+username = cinder
+password = password
+
+[DEFAULT]
+# ...
+my_ip = MANAGEMENT_INTERFACE_IP_ADDRESS
+
+[lvm]
+volume_driver = cinder.volume.drivers.lvm.LVMVolumeDriver
+volume_group = cinder-volumes
+iscsi_protocol = iscsi
+iscsi_helper = lioadm
+
+[DEFAULT]
+# ...
+enabled_backends = lvm
+
+[DEFAULT]
+# ...
+glance_api_servers = http://controller:9292
+
+[oslo_concurrency]
+# ...
+lock_path = /var/lib/cinder/tmp
+
+systemctl enable openstack-cinder-volume.service target.service
+systemctl start openstack-cinder-volume.service target.service
 
 ```
 
