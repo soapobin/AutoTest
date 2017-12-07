@@ -870,6 +870,20 @@ systemctl start openstack-cinder-volume.service target.service
 
 ```
 
+### download test mirror os image
+```shell
+wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
+
+glance image-create --name "cirros" --file cirros-0.3.4-x86_64-disk.img --disk-format qcow2 --container-format bare   --visibility public --progress
+
+[root@node-web-02 ~]# glance image-list
++--------------------------------------+--------+
+| ID                                   | Name   |
++--------------------------------------+--------+
+| c25fa916-1686-4891-89e0-7aa0056611e3 | cirros |
++--------------------------------------+--------+
+```
+
 ## FAQ
 1. su -s /bin/sh -c "keystone-manage db_sync" keystone  #报错
 - ImportError: cannot import name offset
