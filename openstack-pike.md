@@ -870,7 +870,7 @@ systemctl start openstack-cinder-volume.service target.service
 
 ```
 
-### download test mirror os image
+### 9 download test mirror os image
 ```shell
 wget http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img
 
