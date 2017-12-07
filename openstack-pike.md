@@ -859,6 +859,15 @@ lock_path = /var/lib/cinder/tmp
 systemctl enable openstack-cinder-volume.service target.service
 systemctl start openstack-cinder-volume.service target.service
 
+[root@node-web-02 ~]# openstack volume service list
++------------------+---------------------------+------+---------+-------+----------------------------+
+| Binary           | Host                      | Zone | Status  | State | Updated At                 |
++------------------+---------------------------+------+---------+-------+----------------------------+
+| cinder-scheduler | node-web-02               | nova | enabled | up    | 2017-12-07T02:00:03.000000 |
+| cinder-volume    | node-web-01@lvm           | nova | enabled | up    | 2017-12-07T02:00:08.000000 |
+| cinder-volume    | node-web-03@lvm           | nova | enabled | up    | 2017-12-07T02:00:11.000000 |
++------------------+---------------------------+------+---------+-------+----------------------------+
+
 ```
 
 ## FAQ
