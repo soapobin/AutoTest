@@ -788,8 +788,14 @@ yum install centos-release-openstack-pike -y
 yum install python-openstackclient openstack-selinux lvm2 -y
 systemctl enable lvm2-lvmetad.service
 systemctl start lvm2-lvmetad.service
+
+fdisk /dev/xvdb
+
+# input n -> p -> enter -> enter -> t -> 8e -> w
+partprobe
+
 pvcreate /dev/sdb
-vgcreate cinder-volumes /dev/sdb
+vgcreate cinder-volumes /dev/xvdb
 
 vgs
   VG             #PV #LV #SN Attr   VSize    VFree
@@ -801,10 +807,6 @@ filter = [ "a/xvda/","a/xvdb/", "r/.*/"]
 
 yum install openstack-cinder targetcli python-keystone
 
-fdisk /dev/xvdb
-
-# input n -> p -> enter -> enter -> t -> 8e -> w
-partprobe
 
 cat /etc/cinder/cinder.conf
 
