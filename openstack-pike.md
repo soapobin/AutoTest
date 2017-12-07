@@ -800,6 +800,12 @@ cat /etc/lvm/lvm.conf
 filter = [ "a/xvda/","a/xvdb/", "r/.*/"]
 
 yum install openstack-cinder targetcli python-keystone
+
+fdisk /dev/xvdb
+
+# input n -> p -> enter -> enter -> t -> 8e -> w
+partprobe
+
 cat /etc/cinder/cinder.conf
 
 [database]
